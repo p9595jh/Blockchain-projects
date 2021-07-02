@@ -1,49 +1,65 @@
-import yaml
-import util
-import node
-import config
-import docker
 import os
-import shutil
+import config
+import util
 import json
+import yaml
+import shutil
+import node
+import docker
+from configtx import configtx
 from datetime import datetime
 from copy import deepcopy
 from configtx import configtx
 from create_channel import create_channel
 from deploy import deploy
 
-
 if __name__ == '__main__':
 
+    print('\n<history>')
+    histories = os.listdir('../history')
+    histories.sort()
+    for i in range(0, len(histories), 2):
+        print(histories[i][:histories[i].rfind('.')])
     print()
-    print('********************************************')
-    print('*                                          *')
-    print('*       HYPERLEDGER FABRIC GENERATOR       *')
-    print('*          BASED 2.2 LTS VERSION           *')
-    print('*            POWERED BY p9595jh            *')
-    print('*                                          *')
-    print('********************************************')
-    print('\n')
 
+    s = util.sinput('History to load', default=histories[-1][:histories[-1].rfind('.')])
+    path = '../history/%s.json' % s
+    if not os.path.exists(path):
+        print('There is no file `%s`' % s)
+        exit(1)
+    with open(path, 'r') as f:
+        jsn = json.load(f)
+
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
+    #########################################################################################################
 
     if not os.path.exists('../exports'):
         os.mkdir('../exports')
 
-    config.project_name = util.sinput('Project name', default='Example')
+    config.project_name = jsn['project_name']
     path = '../exports/{}/'.format(config.project_name)
     config.path = path
-
-    # while True:
-    #     if os.path.exists(path):
-    #         print('`{}` already exists; Input again please')
-    #         config.project_name = util.sinput('Project name', default='Example')
-    #     else:
-    #         break
 
     if os.path.exists(path):
         answer = util.sinput('`%s` already exists; Would you like to remove and continue? (y/N)' % config.project_name, '[yYnN]{1}', default='y').upper()
         if answer == 'N':
-            exit(1)
+            config.project_name = util.sinput('rename', default='Example')
+            path = '../exports/{}/'.format(config.project_name)
+            while True:
+                if os.path.exists(path):
+                    print('`{}` already exists; Input again please')
+                    config.project_name = util.sinput('rename', default='Example')
+                    path = '../exports/{}/'.format(config.project_name)
+                else:
+                    break
         else:
             shutil.rmtree(path)
 
@@ -64,25 +80,13 @@ if __name__ == '__main__':
     os.mkdir(path + 'invoke/src')
     os.mkdir(path + 'invoke/public')
 
-    config.project_creator = util.sinput('Creator', default=config.project_creator)
-    config.srvn = util.sinput('Service addr', default=config.srvn)
-    config.network_profile = util.sinput('Network profile', default=config.network_profile)
+    config.project_creator = jsn['project_creator']
+    config.srvn = jsn['srvn']
+    config.network_profile = jsn['network_profile']
 
     # chaincode setting
-    config.chaincode_title = util.sinput('Chaincode title (first letter capital)', '[A-Z]+[a-zA-Z0-9\_]+', config.project_name)
-    chaincode_title_folder = config.chaincode_title[0].lower()
-
-    for i in range(1, len(config.chaincode_title)):
-        # when the capital is found, turn this to -{lower}
-        # ex. input: helloWorld, output: hello-world
-        if 65 <= ord(config.chaincode_title[i]) <= 57:
-            chaincode_title_folder += '-' + config.chaincode_title[i].lower()
-        # change underscore(_) to hypen(-)
-        elif config.chaincode_title[i] == '_':
-            chaincode_title_folder += '-'
-        # if there is no problem, copy the character
-        else:
-            chaincode_title_folder += config.chaincode_title[i]
+    config.chaincode_title = jsn['chaincode_name']
+    chaincode_title_folder = jsn['chaincode_folder']
     
     os.mkdir(path + 'chaincode/codes/%s/' % chaincode_title_folder)
     os.mkdir(path + 'chaincode/codes/%s/src' % chaincode_title_folder)
@@ -102,104 +106,18 @@ if __name__ == '__main__':
         'TEMPLATE_CC': (config.chaincode_title, 1)
     })
 
+    config.channel_identities = jsn['channel_identities']
+    for key in config.channel_identities.keys():
+        config.channel_identities[key] = tuple(config.channel_identities[key])
 
-    print()
-
-
-    number_of_organs = util.ninput('Number of organizations', default=1)
-    created_peer_count = 0
-    created_ca_count = 0
-    created_couch_count = 0
-
-    for i in range(number_of_organs):
-        print()
-        config.line_print()
-        print('[Organization %d/%d]' % (i + 1, number_of_organs))
-        # addr, name, msp, admin='admin', adminpw='adminpw', peers=[]
-        addr = util.sinput('addr', default='org{}'.format(i + 1))
-        name = util.sinput('name', default=addr[0].upper() + addr[1:])
-        msp = util.sinput('MSP', default=name + 'MSP')
-        caport = util.ninput('CA port', default=config.caport_default + config.caport_default_step * created_ca_count)
-        created_ca_count += 1
-        admin = util.sinput('admin', default='admin')
-        adminpw = util.sinput('admin password', default='adminpw')
-
-        number_of_peers = util.ninput('Number of peers of the organization {}'.format(i), default=1)
+    for organ in jsn['organs']:
         peers = []
-        # name, port, channels
-        for j in range(number_of_peers):
-            print()
-            print('[Peer %d/%d of %s]' % (j + 1, number_of_peers, name))
-            peer_name = util.sinput('peer name', default='peer{}'.format(j))
-            peer_port = util.ninput('peer port', default=config.peer_default_port + config.peer_default_port_step * created_peer_count)
-            created_peer_count += 1
-            peer_dbport = util.ninput('peer DB port', default=config.couch_default + config.couch_default_step * created_couch_count)
-            created_couch_count += 1
-            peer_channel_names = util.minput('input all channels of the peer seperates with space (ex. `channel1 channel2`)', default=['mychannel'])
-            channels = []
-            for k, channel_name in enumerate(peer_channel_names):
-                print('\n[Channel %s (%d/%d) of %s.%s.%s.com]' % (channel_name, k + 1, len(peer_channel_names), peer_name, addr, config.srvn))
-                if channel_name in config.channel_identities:
-                    config.channel_identities[channel_name][2].append(util.naming_var(addr, j, k))
-                    t = config.channel_identities[channel_name]
-                    print('you have selected existing channel - use its setting (%s, %s, %s)' % (channel_name, t[0], t[1]))
-                    channels.append(node.FabChannel(channel_name, t[0], t[1]))
-                else:
-                    channel_default = 'MyChannelProfile'
-                    channel_default_str = channel_default
-                    l = 2
-                    while True:
-                        profile_duplicates = False
-                        for _, v in config.channel_identities.items():
-                            if v[0] == channel_default_str:
-                                profile_duplicates = True
-                                channel_default_str += str(l)
-                                l += 1
-                                break
-                        if not profile_duplicates: break
+        for peer in organ['peers']:
+            peers.append(node.Peer(peer['name'], peer['port'], peer['dbport'], [node.FabChannel(channel['channel'], channel['profile'], channel['consortium']) for channel in peer['channels']]))
+        util.organs.append(node.Organ(organ['addr'], organ['name'], organ['msp'], organ['caport'], organ['admin'], organ['adminpw'], peers))
 
-                    profile = util.sinput('channel profile of {}'.format(channel_name), default=channel_default_str)
-                    while True:
-                        profile_duplicates = False
-                        for _, v in config.channel_identities.items():
-                            if v[0] == profile:
-                                print('channel profile `{}` already exists; please input again')
-                                profile = util.sinput('channel profile of {}'.format(channel_name), default=channel_default_str)
-                                profile_duplicates = True
-                        if not profile_duplicates: break
+    util.orderer = node.Orderer(jsn['orderer']['msp'], jsn['orderer']['caport'], [node.OrdererItem(item['addr'], item['name'], item['port']) for item in jsn['orderer']['items']])
 
-                    consortium = util.sinput('consortium of {}'.format(channel_name), default=config.consortium_name)
-                    channels.append(node.FabChannel(channel_name, profile, consortium))
-                    config.channel_identities[channel_name] = (profile, consortium, [util.naming_var(addr, j, k)])
-            peers.append(node.Peer(peer_name, peer_port, peer_dbport, channels))
-        
-        util.organs.append(node.Organ(addr, name, msp, caport, admin, adminpw, peers))
-
-
-    print()
-
-
-    config.line_print()
-    print('[Orderer]')
-    orderer_msp = util.sinput('orderer MSP', default='OrdererMSP')
-    orderer_caport = util.ninput('orderer CA port', default=config.caport_default + config.caport_default_step * created_ca_count)
-    orderer_addrs = util.minput('input all items of the orderer seperates with space (ex. `orderer1 orderer2`)', default=['orderer'])
-    orderer_items = []
-
-    for i, orderer_item_addr in enumerate(orderer_addrs):
-        print()
-        orderer_item_name = util.sinput('name of ' + orderer_item_addr, default=orderer_item_addr[0].upper() + orderer_item_addr[1:])
-        orderer_item_port = util.ninput('port of ' + orderer_item_addr, config.orderer_default_port + i * config.orderer_default_port_step)
-        orderer_items.append(node.OrdererItem(orderer_item_addr, orderer_item_name, orderer_item_port))
-    util.orderer = node.Orderer(orderer_msp, orderer_caport, orderer_items)
-
-
-    config.line_print()
-
-
-    print('Creating files...')
-
-    # generate configtx.yaml
     configtx_str = configtx()
     with open(path + 'network/configtx/configtx.yaml', 'w+') as f:
         f.write(configtx_str)
@@ -432,8 +350,6 @@ if __name__ == '__main__':
 
     # save commands history
     commands = deepcopy(d)
-    commands['project_name'] = config.project_name
-    commands['project_creator'] = config.project_creator
     commands['chaincode_folder'] = chaincode_title_folder
     commands['docker'] = {
         'ca': docker_compose_ca,
@@ -455,7 +371,6 @@ if __name__ == '__main__':
     with open(history_path + '%s.yaml' % now, 'w+') as f:
         f.write(yaml.dump(commands))
 
-
-    print()
     print('Working done - check the folder `{}`'.format(path))
     print()
+
