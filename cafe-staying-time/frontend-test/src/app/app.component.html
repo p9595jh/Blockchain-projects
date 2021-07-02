@@ -1,0 +1,82 @@
+<form (submit)="onGettingInSubmit()">
+  <legend>getting in</legend>
+  <table>
+    <tr>
+      <td>cafe</td>
+      <td>
+        <input type="text" [(ngModel)]="gettingIn.cafe" name="cafe">
+      </td>
+    </tr>
+    <tr>
+      <td>phone</td>
+      <td>
+        <input type="text" [(ngModel)]="gettingIn.phone" name="phone">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <label>
+          <input type="checkbox" [(ngModel)]="gettingIn.agreeToOfferInfo" name="agreeToOfferInfo"> agree to offer info
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <button type="submit">submit</button>
+      </td>
+    </tr>
+  </table>
+</form>
+
+<br><br><br><br>
+
+<input type="text" [(ngModel)]="gettingOut" name="gettingOut" placeholder="phone number to exit">
+<button (click)="onGettingOutSubmit()">exit</button>
+
+<br><br><br><br>
+
+<table border="1">
+  <caption>
+    <button (click)="getAllIOs()">get all customers</button>
+  </caption>
+  <tr>
+    <th>key</th>
+    <th>cafe</th>
+    <th>phone</th>
+    <th>in_ms</th>
+    <th>out_ms</th>
+    <th>agreeToOfferInfo</th>
+  </tr>
+  <tr *ngFor="let io of ios">
+    <td>{{ io.key }}</td>
+    <td>{{ io.cafe }}</td>
+    <td>{{ io.phone }}</td>
+    <td>{{ io.in_ms }}</td>
+    <td>{{ io.out_ms }}</td>
+    <td>{{ io.agreeToOfferInfo }}</td>
+  </tr>
+</table>
+
+<br><br><br><br>
+
+<table border="1">
+  <caption>
+    <button (click)="getDisobeyeds()">disobeyed customers</button>
+  </caption>
+  <tr>
+    <th>key</th>
+    <th>cafe</th>
+    <th>phone</th>
+    <th>in_ms</th>
+    <th>out_ms</th>
+    <th>agreeToOfferInfo</th>
+  </tr>
+  <tr *ngFor="let io of disobeyeds">
+    <td>{{ io.key }}</td>
+    <td>{{ io.cafe }}</td>
+    <td>{{ io.phone }}</td>
+    <td>{{ io.in_ms }}</td>
+    <td>{{ io.out_ms }}</td>
+    <td>{{ io.agreeToOfferInfo }}</td>
+  </tr>
+</table>

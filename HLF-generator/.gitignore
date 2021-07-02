@@ -1,0 +1,5 @@
+exports/*
+.DS_Store
+src/__pycache__
+src/test.py
+history/*

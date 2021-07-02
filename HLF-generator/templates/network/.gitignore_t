@@ -1,0 +1,13 @@
+/channel-artifacts/*.tx
+/channel-artifacts/*.block
+/ledgers
+/ledgers-backup
+/channel-artifacts/*.json
+organizations/ordererOrganizations/*
+organizations/peerOrganizations/*
+
+{{GITIGNORE_ORGANS_1}}
+{{GITIGNORE_ORGANS_2}}
+system-genesis-block/*
+*.tar.gz
+log.txt

@@ -1,0 +1,26 @@
+/channel-artifacts/*.tx
+/channel-artifacts/*.block
+/ledgers
+/ledgers-backup
+/channel-artifacts/*.json
+# /org3-artifacts/crypto-config/*
+organizations/ordererOrganizations/*
+organizations/peerOrganizations/*
+
+organizations/fabric-ca/ordererOrg/*
+organizations/fabric-ca/ins1/*
+organizations/fabric-ca/ins2/*
+organizations/fabric-ca/ins3/*
+organizations/fabric-ca/ga1/*
+organizations/fabric-ca/ga2/*
+
+!organizations/fabric-ca/ordererOrg/fabric-ca-server-config.yaml
+!organizations/fabric-ca/ins1/fabric-ca-server-config.yaml
+!organizations/fabric-ca/ins2/fabric-ca-server-config.yaml
+!organizations/fabric-ca/ins3/fabric-ca-server-config.yaml
+!organizations/fabric-ca/ga1/fabric-ca-server-config.yaml
+!organizations/fabric-ca/ga2/fabric-ca-server-config.yaml
+
+system-genesis-block/*
+*.tar.gz
+log.txt
