@@ -26,6 +26,9 @@ if __name__ == '__main__':
     print('\n')
 
 
+    if not os.path.exists('../exports'):
+        os.mkdir('../exports')
+
     config.project_name = util.sinput('Project name', default='Example')
     path = '../exports/{}/'.format(config.project_name)
     config.path = path
