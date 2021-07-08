@@ -71,29 +71,6 @@ def configtx():
 
         org_names_in_profile += '\n%s- *%s' % (tab * 5, org.name)
         for peer in org.peers:
-    #         each = '''
-    # - &%s
-    #     Name: %s
-    #     ID: %s
-    #     MSPDir: ../organizations/peerOrganizations/%s.%s.com/msp
-    #     Policies:
-    #         Readers:
-    #             Type: Signature
-    #             Rule: "OR('%s.admin', '%s.peer', '%s.client')"
-    #         Writers:
-    #             Type: Signature
-    #             Rule: "OR('%s.admin', '%s.client')"
-    #         Admins:
-    #             Type: Signature
-    #             Rule: "OR('%s.admin')"
-    #         Endorsement:
-    #             Type: Signature
-    #             Rule: "OR('%s.peer')"
-    #     AnchorPeers:
-    #         - Host: %s.%s.%s.com
-    #           Port: %s\n''' % (org.name, org.msp, org.msp, org.addr, config.srvn, org.msp, org.msp, org.msp, org.msp, org.msp, org.msp, org.msp, peer.name, org.addr, config.srvn, peer.port)
-    #         peerOrg += each
-
             for channel in peer.channels:
                 if channel.channel in channel_dict:
                     organizations = channel_dict[channel.channel][1]
