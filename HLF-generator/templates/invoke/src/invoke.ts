@@ -10,32 +10,6 @@ function checkParamCount(need: number) {
     }
 }
 
-async function query(contract: Contract) {
-    let res: string;
-    switch (process.argv.length - 2) {
-        case 0: res = (await contract.evaluateTransaction(process.argv[2])).toString();
-        case 1: res = (await contract.evaluateTransaction(process.argv[2], process.argv[3])).toString();
-        case 2: res = (await contract.evaluateTransaction(process.argv[2], process.argv[3], process.argv[4])).toString();
-        case 3: res = (await contract.evaluateTransaction(process.argv[2], process.argv[3], process.argv[4], process.argv[5])).toString();
-        case 4: res = (await contract.evaluateTransaction(process.argv[2], process.argv[3], process.argv[4], process.argv[5], process.argv[6])).toString();
-        default: res = '{}';
-    }
-    return JSON.parse(res);
-}
-
-async function invoke(contract: Contract) {
-    let res: string;
-    switch (process.argv.length - 2) {
-        case 0: res = (await contract.submitTransaction(process.argv[2])).toString();
-        case 1: res = (await contract.submitTransaction(process.argv[2], process.argv[3])).toString();
-        case 2: res = (await contract.submitTransaction(process.argv[2], process.argv[3], process.argv[4])).toString();
-        case 3: res = (await contract.submitTransaction(process.argv[2], process.argv[3], process.argv[4], process.argv[5])).toString();
-        case 4: res = (await contract.submitTransaction(process.argv[2], process.argv[3], process.argv[4], process.argv[5], process.argv[6])).toString();
-        default: res = '{}';
-    }
-    return JSON.parse(res);
-}
-
 async function main() {
     try {
         const ccp = utils.getProfile(utils.delegate);
@@ -62,11 +36,13 @@ async function main() {
             process.exit(1);
         }
 
+        const parameters = process.argv.slice(2);
+
         // for querying
         // must add more arguments
         console.log(
             JSON.stringify(
-                await query(contract),
+                (await contract.evaluateTransaction(...parameters)).toString(),
                 null,
                 2
             )
@@ -76,7 +52,7 @@ async function main() {
         // must add more arguments
         console.log(
             JSON.stringify(
-                await invoke(contract),
+                (await contract.submitTransaction(...parameters)).toString(),
                 null,
                 2
             )

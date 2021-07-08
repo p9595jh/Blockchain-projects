@@ -12,7 +12,7 @@ class DockerCa:
 
     def to_dict(self):
         return {
-            'image': 'hyperledger/fabric-ca:$IMAGE_TAG',
+            'image': 'hyperledger/fabric-ca',
             'environment': [
                 'FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server',
                 'FABRIC_CA_SERVER_CA_NAME=' + self.ca_name,
@@ -70,7 +70,7 @@ class DockerNetOrderer:
         return {
             self.addr: {
                 'container_name': '%s.%s.com' % (self.item.addr, config.srvn),
-                'image': 'hyperledger/fabric-orderer:$IMAGE_TAG',
+                'image': 'hyperledger/fabric-orderer',
                 'environment': [
                     'FABRIC_LOGGING_SPEC=INFO',
                     'ORDERER_GENERAL_LISTENADDRESS=0.0.0.0',
@@ -114,7 +114,7 @@ class DockerNetPeer:
         return {
             self.addr: {
                 'container_name': self.addr,
-                'image': 'hyperledger/fabric-peer:$IMAGE_TAG',
+                'image': 'hyperledger/fabric-peer',
                 'environment': [
                     'CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock',
                     'CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=docker_test',

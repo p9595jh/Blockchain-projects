@@ -30,14 +30,17 @@ def create_channel():
         s += '\n'
 
     s += '## Set the anchor peers for each org in the channel\n'
-    for org in util.organs:
-        s += 'infoln "Updating anchor peers for %s..."\n' % org.addr
-        for i, peer in enumerate(org.peers):
-            if len(peer.channels) == 1:
-                s += 'updateAnchorPeers ${%s[@]}\n' % util.naming_var(org.addr, i, 0)
-            else:
-                for j, channel in enumerate(peer.channels):
-                    s += 'updateAnchorPeers ${%s[@]} %s\n' % (util.naming_var(org.addr, i, j), channel.profile)
-            s += '\n'
+
+    for channel, profile_t in config.channel_identities.items():
+        s += 'infoln "Updating anchor peers for %s..."\n' % channel
+        s += 'updateAnchorPeers ${%s[@]}' % profile_t[2][0]
+        exists_multi = False
+        for ch, pt in config.channel_identities.items():
+            if channel == ch: continue
+            p: str = profile_t[2][0]
+            if p[:p.rfind('_')] in [ps[:ps.rfind('_')] for ps in pt[2]]:
+                exists_multi = True
+                break
+        s += (' %s\n\n' % profile_t[0]) if exists_multi else '\n\n'
 
     return s

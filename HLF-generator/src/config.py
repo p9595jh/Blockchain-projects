@@ -36,3 +36,4 @@ couch_default = 5984
 couch_default_step = step_default
 
 chaincode_title = 'TestCC'
+chaincode_title_folder = 'testcc'
