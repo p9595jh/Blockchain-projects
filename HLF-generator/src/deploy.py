@@ -18,7 +18,7 @@ def match_variables(params, rns, indent='  '):
     s += '\n'
     return s
 
-def kurikaesu(params, label, command, infoln=None):
+def repeat(params, label, command, infoln=None):
     s = '## ' + label + '\n'
     if infoln is not None:
         s += 'infoln "{}"\n'.format(infoln)
@@ -31,15 +31,15 @@ def one_set(params, indent='  '):
     s = indent + unset(params)
 
     s += indent + '## package the chaincode\npackageChaincode\n\n'
-    s += indent + kurikaesu(params, 'Install chaincode', 'installChaincode', 'Installing chaincode on the channel...')
-    s += indent + kurikaesu(params, 'query whether the chaincode is installed', 'queryInstalled')
-    s += indent + kurikaesu(params, 'approve the definition for the channel', 'approveForMyOrg')
+    s += indent + repeat(params, 'Install chaincode', 'installChaincode', 'Installing chaincode on the channel...')
+    s += indent + repeat(params, 'query whether the chaincode is installed', 'queryInstalled')
+    s += indent + repeat(params, 'approve the definition for the channel', 'approveForMyOrg')
 
     s += indent + '## now that we know for sure both orgs have approved, commit the definition\n'
     param_join = make_param_join(params)
     s += indent + 'commitChaincodeDefinition %s\n\n' % param_join
 
-    s += indent + kurikaesu(params, 'query on both orgs to see that the definition committed successfully', 'queryCommitted')
+    s += indent + repeat(params, 'query on both orgs to see that the definition committed successfully', 'queryCommitted')
 
     s += indent + '## Invoke the chaincode - this does require that the chaincode have the `initLedger` method defined\n'
     s += indent + 'if [ "$CC_INIT_FCN" = "NA" ]; then\n'
@@ -87,7 +87,7 @@ def deploy():
         if i == 0:
             l = len(profile_t[2])
         elif l != len(profile_t[2]):
-                return deploy_multiple_and_diff_len()
+            return deploy_multiple_and_diff_len()
     
     return deploy_multiple_but_same_len(l)
 
