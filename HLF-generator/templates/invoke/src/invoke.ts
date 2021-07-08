@@ -39,7 +39,6 @@ async function main() {
         const parameters = process.argv.slice(2);
 
         // for querying
-        // must add more arguments
         console.log(
             JSON.stringify(
                 (await contract.evaluateTransaction(...parameters)).toString(),
@@ -48,8 +47,7 @@ async function main() {
             )
         );
 
-        // for invoke
-        // must add more arguments
+        // for invoking
         console.log(
             JSON.stringify(
                 (await contract.submitTransaction(...parameters)).toString(),
