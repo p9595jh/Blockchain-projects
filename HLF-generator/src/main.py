@@ -37,24 +37,25 @@ def pre_process():
     os.mkdir(config.path + 'invoke/public')
 
     # chaincode setting
-    for i in range(1, len(config.chaincode_title)):
-        # when the capital is found, turn this to -{lower}
-        # ex. input: HelloWorld, output: hello-world
-        if 65 <= ord(config.chaincode_title[i]) <= 90:
-            config.chaincode_title_folder += '-' + config.chaincode_title[i].lower()
-        # change underscore(_) to hypen(-)
-        elif config.chaincode_title[i] == '_':
-            config.chaincode_title_folder += '-'
-        # if there is no problem, copy the character
-        else:
-            config.chaincode_title_folder += config.chaincode_title[i]
-    
+    if config.chaincode_title_folder == 'testcc':
+        for i in range(1, len(config.chaincode_title)):
+            # when the capital is found, turn this to -{lower}
+            # ex. input: HelloWorld, output: hello-world
+            if 65 <= ord(config.chaincode_title[i]) <= 90:
+                config.chaincode_title_folder += '-' + config.chaincode_title[i].lower()
+            # change underscore(_) to hypen(-)
+            elif config.chaincode_title[i] == '_':
+                config.chaincode_title_folder += '-'
+            # if there is no problem, copy the character
+            else:
+                config.chaincode_title_folder += config.chaincode_title[i]
+
     os.mkdir(config.path + 'chaincode/codes/%s/' % config.chaincode_title_folder)
     os.mkdir(config.path + 'chaincode/codes/%s/src' % config.chaincode_title_folder)
 
     util.copy_file('chaincode/codes/template_cc/tsconfig.json', 'chaincode/codes/%s/tsconfig.json' % config.chaincode_title_folder)
     util.copy_file('chaincode/codes/template_cc/tslint.json', 'chaincode/codes/%s/tslint.json' % config.chaincode_title_folder)
-    util.copy_file('chaincode/codes/template_cc/src/utils.ts', 'chaincode/codes/%s/src/utils.sh' % config.chaincode_title_folder)
+    util.copy_file('chaincode/codes/template_cc/src/utils.ts', 'chaincode/codes/%s/src/utils.ts' % config.chaincode_title_folder)
 
     util.copy_replace('chaincode/codes/template_cc/package.json', 'chaincode/codes/%s/package.json' % config.chaincode_title_folder, {
         'TEMPLATE_CC': (config.chaincode_title_folder, 1),
@@ -132,7 +133,6 @@ def run_process(log=True):
         gen_organs_commands += '  infoln "Create {} Identites"\n\n'.format(org.name)
         gen_organs_commands += '  orgEnv %s %d\n' % (org.addr, org.caport)
         gen_organs_commands += '  createOrg $SERV_NM $ORG_ADDR $CAPORT\n'
-        # gen_organs_commands_peers = ''
 
         docker_rm_commands += "    docker run --rm -v $(pwd):/data busybox sh -c 'cd /data && rm -rf organizations/fabric-ca/{0}/msp organizations/fabric-ca/{0}/tls-cert.pem organizations/fabric-ca/{0}/ca-cert.pem organizations/fabric-ca/{0}/IssuerPublicKey organizations/fabric-ca/{0}/IssuerRevocationPublicKey organizations/fabric-ca/{0}/fabric-ca-server.db'\n".format(org.addr)
 
@@ -166,7 +166,6 @@ def run_process(log=True):
             docker_compose_net['volumes'][net.addr] = None
             docker_compose_net['services'][net.addr] = net.to_dict()[net.addr]
 
-            # gen_organs_commands_peers += peer.name + ' '
             gen_organs_commands += '  registerPeer ${regiParams[@]} %s\n' % peer.name
             gen_ccp_commands += '  ./organizations/ccp-generate.sh ${SERV_NM} %s %s %d %d %s\n' % (org.addr, org.name, peer.port, org.caport, peer.name)
 
@@ -182,7 +181,6 @@ def run_process(log=True):
 
         d['organs'].append(org_dict)
 
-        # gen_organs_commands += '  registerPeer ${regiParams[@]} %s\n' % gen_organs_commands_peers[:-1]
         gen_organs_commands += '  registerUser ${regiParams[@]} user1 User1\n'
         gen_organs_commands += '  registerAdmin ${regiParams[@]} ${ORG_ADDR}admin Admin\n\n'
 

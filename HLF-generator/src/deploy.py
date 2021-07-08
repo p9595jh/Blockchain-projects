@@ -35,10 +35,9 @@ def one_set(params, indent='  '):
     s += indent + repeat(params, 'query whether the chaincode is installed', 'queryInstalled')
     s += indent + repeat(params, 'approve the definition for the channel', 'approveForMyOrg')
 
-    s += indent + '## now that we know for sure both orgs have approved, commit the definition\n'
     param_join = make_param_join(params)
+    s += indent + '## now that we know for sure both orgs have approved, commit the definition\n'
     s += indent + 'commitChaincodeDefinition %s\n\n' % param_join
-
     s += indent + repeat(params, 'query on both orgs to see that the definition committed successfully', 'queryCommitted')
 
     s += indent + '## Invoke the chaincode - this does require that the chaincode have the `initLedger` method defined\n'

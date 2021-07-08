@@ -19,7 +19,6 @@ MAX_RETRY=${11:-"5"}
 VERBOSE=${12:-"false"}
 
 # FABRIC_CFG_PATH=$PWD/configtx
-# CHANNEL_NAME="hnchannel1"
 CC_SRC_PATH="../chaincode/codes/$CC_SRC_PATH"
 
 println "executing with the following"
