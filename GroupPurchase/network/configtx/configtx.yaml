@@ -1,0 +1,242 @@
+---
+
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ../organizations/ordererOrganizations/hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+        OrdererEndpoints:
+            - orderer.hn.com:7050
+
+
+    - &Seller1
+        Name: Seller1MSP
+        ID: Seller1MSP
+        MSPDir: ../organizations/peerOrganizations/seller1.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Seller1MSP.admin', 'Seller1MSP.peer', 'Seller1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Seller1MSP.admin', 'Seller1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Seller1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Seller1MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.seller1.hn.com
+              Port: 7051
+
+    - &Seller2
+        Name: Seller2MSP
+        ID: Seller2MSP
+        MSPDir: ../organizations/peerOrganizations/seller2.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Seller2MSP.admin', 'Seller2MSP.peer', 'Seller2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Seller2MSP.admin', 'Seller2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Seller2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Seller2MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.seller2.hn.com
+              Port: 8051
+
+    - &Customer
+        Name: CustomerMSP
+        ID: CustomerMSP
+        MSPDir: ../organizations/peerOrganizations/customer.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('CustomerMSP.admin', 'CustomerMSP.peer', 'CustomerMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('CustomerMSP.admin', 'CustomerMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('CustomerMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('CustomerMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.customer.hn.com
+              Port: 9051
+
+    - &Item
+        Name: ItemMSP
+        ID: ItemMSP
+        MSPDir: ../organizations/peerOrganizations/item.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('ItemMSP.admin', 'ItemMSP.peer', 'ItemMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('ItemMSP.admin', 'ItemMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('ItemMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('ItemMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.item.hn.com
+              Port: 12051
+
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+Orderer: &OrdererDefaults
+    OrdererType: etcdraft
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.hn.com
+          Port: 7050
+          ClientTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+
+    Addresses: 
+        - orderer.hn.com:7050
+
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+Profiles:
+    HnNetworkProfile:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            Consortium:
+                Organizations:
+                    - *Seller1
+                    - *Seller2
+                    - *Customer
+                    - *Item
+
+    SellChannel1:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Seller1
+                - *Customer
+                - *Customer
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    ItemChannel:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Seller1
+                - *Seller2
+                - *Item
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    SellChannel2:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Seller2
+                - *Customer
+                - *Customer
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+

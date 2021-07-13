@@ -85,9 +85,7 @@ if __name__ == '__main__':
     config.srvn = jsn['srvn']
     config.network_profile = jsn['network_profile']
 
-    # chaincode setting
-    config.chaincode_title = jsn['chaincode_name']
-    config.chaincode_title_folder = jsn['chaincode_folder']
+    config.chaincode_titles = [(cc['title'], cc['folder']) for cc in jsn['chaincode_names']]
 
     pre_process()
 

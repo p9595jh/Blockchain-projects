@@ -37,7 +37,7 @@ def ninput(label: str, default=None):
 def minput(label: str, seperator=' ', pattern=pattern_default, default=None):
     p = re.compile(pattern)
     while True:
-        text = make_input(label, ' '.join(default) if default is not None else None)
+        text = make_input(label, seperator.join(default) if default is not None else None)
         if default is not None and text == '': return default
         texts = text.split(seperator)
         flag = True
@@ -48,7 +48,7 @@ def minput(label: str, seperator=' ', pattern=pattern_default, default=None):
                 print('`%s` is not matched to the pattern `%s`' % (t, pattern))
                 flag = False
                 break
-            else: arr.append(t)
+            elif t not in arr: arr.append(t)
         if flag: return arr
 
 def copy_replace(src: str, dst: str, replace_dict: dict):
@@ -57,9 +57,11 @@ def copy_replace(src: str, dst: str, replace_dict: dict):
         content = f.read()
         for k, v in replace_dict.items():
             try:
-                content = content.replace('{{%s}}' % k, v[0], v[1])
-            except IndexError as e:
-                content = content.replace('{{%s}}' % k, v[0])
+                new, count = v
+                content = content.replace('{{%s}}' % k, new, count)
+            except ValueError as e:
+                new = v[0]
+                content = content.replace('{{%s}}' % k, new)
     with open(config.path + dst, 'w+') as f:
         f.write(content)
 

@@ -14,6 +14,7 @@ channel_profiles = ['TestChannelProfile']
 
 # { channel_name: (channel_profile, consortium, [represented names in shell script (ex. _org2_1_0)]) }
 # the tuple (which is the value of this dictionary) is called as 'profile_t'
+# 'represented names' field is called as 'rns', and each of these is 'rn'
 channel_identities = {}
 
 template_path = '../templates/'
@@ -37,3 +38,6 @@ couch_default_step = step_default
 
 chaincode_title = 'TestCC'
 chaincode_title_folder = 'testcc'
+
+# [(title, folder)]
+chaincode_titles = []

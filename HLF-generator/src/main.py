@@ -13,6 +13,25 @@ from create_channel import create_channel
 from deploy import deploy
 
 
+def camel_to_pothole(camel: str):
+    s = camel[0].lower()
+    for i in range(1, len(camel)):
+        # when the capital is found, turn this to -{lower}
+        # ex. input: HelloWorld, output: hello-world
+        if 65 <= ord(camel[i]) <= 90:
+            s += '-' + camel[i].lower()
+        # change underscore(_) to hypen(-)
+        elif camel[i] == '_':
+            s += '-'
+        # if there is no problem, copy the character
+        else:
+            s += camel[i]
+    return s
+
+def cc_title_tuple(s, default):
+    if s == '.': s = default
+    return (s, camel_to_pothole(s))
+
 def pre_process():
 
     # make folders
@@ -36,37 +55,27 @@ def pre_process():
     os.mkdir(config.path + 'invoke/src')
     os.mkdir(config.path + 'invoke/public')
 
-    # chaincode setting
-    if config.chaincode_title_folder == 'testcc':
-        for i in range(1, len(config.chaincode_title)):
-            # when the capital is found, turn this to -{lower}
-            # ex. input: HelloWorld, output: hello-world
-            if 65 <= ord(config.chaincode_title[i]) <= 90:
-                config.chaincode_title_folder += '-' + config.chaincode_title[i].lower()
-            # change underscore(_) to hypen(-)
-            elif config.chaincode_title[i] == '_':
-                config.chaincode_title_folder += '-'
-            # if there is no problem, copy the character
-            else:
-                config.chaincode_title_folder += config.chaincode_title[i]
+    for chaincode_title, chaincode_title_folder in config.chaincode_titles:
+        try:
+            os.mkdir(config.path + 'chaincode/codes/%s/' % chaincode_title_folder)
+            os.mkdir(config.path + 'chaincode/codes/%s/src' % chaincode_title_folder)
+        except FileExistsError as e:
+            continue
 
-    os.mkdir(config.path + 'chaincode/codes/%s/' % config.chaincode_title_folder)
-    os.mkdir(config.path + 'chaincode/codes/%s/src' % config.chaincode_title_folder)
+        util.copy_file('chaincode/codes/template_cc/tsconfig.json', 'chaincode/codes/%s/tsconfig.json' % chaincode_title_folder)
+        util.copy_file('chaincode/codes/template_cc/tslint.json', 'chaincode/codes/%s/tslint.json' % chaincode_title_folder)
+        util.copy_file('chaincode/codes/template_cc/src/utils.ts', 'chaincode/codes/%s/src/utils.ts' % chaincode_title_folder)
 
-    util.copy_file('chaincode/codes/template_cc/tsconfig.json', 'chaincode/codes/%s/tsconfig.json' % config.chaincode_title_folder)
-    util.copy_file('chaincode/codes/template_cc/tslint.json', 'chaincode/codes/%s/tslint.json' % config.chaincode_title_folder)
-    util.copy_file('chaincode/codes/template_cc/src/utils.ts', 'chaincode/codes/%s/src/utils.ts' % config.chaincode_title_folder)
-
-    util.copy_replace('chaincode/codes/template_cc/package.json', 'chaincode/codes/%s/package.json' % config.chaincode_title_folder, {
-        'TEMPLATE_CC': (config.chaincode_title_folder, 1),
-    })
-    util.copy_replace('chaincode/codes/template_cc/src/index.ts', 'chaincode/codes/%s/src/index.ts' % config.chaincode_title_folder, {
-        'TEMPLATE_CC': (config.chaincode_title,),
-        'CC_FILENAME': (config.chaincode_title_folder,)
-    })
-    util.copy_replace('chaincode/codes/template_cc/src/TEMPLATE_CC.ts', 'chaincode/codes/%s/src/%s.ts' % (config.chaincode_title_folder, config.chaincode_title_folder), {
-        'TEMPLATE_CC': (config.chaincode_title, 1)
-    })
+        util.copy_replace('chaincode/codes/template_cc/package.json', 'chaincode/codes/%s/package.json' % chaincode_title_folder, {
+            'TEMPLATE_CC': (chaincode_title_folder, 1),
+        })
+        util.copy_replace('chaincode/codes/template_cc/src/index.ts', 'chaincode/codes/%s/src/index.ts' % chaincode_title_folder, {
+            'TEMPLATE_CC': (chaincode_title,),
+            'CC_FILENAME': (chaincode_title_folder,)
+        })
+        util.copy_replace('chaincode/codes/template_cc/src/TEMPLATE_CC.ts', 'chaincode/codes/%s/src/%s.ts' % (chaincode_title_folder, chaincode_title_folder), {
+            'TEMPLATE_CC': (chaincode_title, 1)
+        })
 
 
 def run_process(log=True):
@@ -113,10 +122,12 @@ def run_process(log=True):
 
     d = {
         'srvn': config.srvn,
-        # 'consortium': config.consortium_name,
         'network_profile': config.network_profile,
         'channel_identities': config.channel_identities,
-        'chaincode_name': config.chaincode_title,
+        'chaincode_names': [{
+            'title': title,
+            'folder': folder
+        } for title, folder in config.chaincode_titles],
         'orderer': deepcopy(util.orderer.__dict__),
         'organs': []
     }
@@ -361,9 +372,8 @@ if __name__ == '__main__':
     config.srvn = util.sinput('Service addr', default=config.srvn)
     config.network_profile = util.sinput('Network profile', default=config.network_profile)
 
-    # chaincode setting
-    config.chaincode_title = util.sinput('Chaincode title (first letter capital)', '[A-Z]+[a-zA-Z0-9\_]+', config.project_name)
-    config.chaincode_title_folder = config.chaincode_title[0].lower()
+    chaincode_titles = util.minput('Chaincode titles (first letter capital, if you\'d like to input default, use `.`)', pattern='[.]|([A-Z]+[a-zA-Z0-9\_]*)', default=[config.project_name])
+    config.chaincode_titles = [cc_title_tuple(chaincode_title, config.project_name) for chaincode_title in chaincode_titles]
 
     pre_process()
 
@@ -405,9 +415,9 @@ if __name__ == '__main__':
                 print('\n[Channel %s (%d/%d) of %s.%s.%s.com]' % (channel_name, k + 1, len(peer_channel_names), peer_name, addr, config.srvn))
                 if channel_name in config.channel_identities:
                     config.channel_identities[channel_name][2].append(util.naming_var(addr, j, k))
-                    t = config.channel_identities[channel_name]
-                    print('you have selected existing channel - use its setting (%s, %s, %s)' % (channel_name, t[0], t[1]))
-                    channels.append(node.FabChannel(channel_name, t[0], t[1]))
+                    profile, consortium, rns = config.channel_identities[channel_name]
+                    print('you have selected existing channel - use its setting (%s, %s, %s)' % (channel_name, profile, consortium))
+                    channels.append(node.FabChannel(channel_name, profile, consortium))
                 else:
                     channel_default = 'MyChannelProfile'
                     channel_default_str = channel_default
@@ -427,7 +437,7 @@ if __name__ == '__main__':
                         profile_duplicates = False
                         for _, v in config.channel_identities.items():
                             if v[0] == profile:
-                                print('channel profile `{}` already exists; please input again')
+                                print('channel profile `{}` already exists; please input again'.format(profile))
                                 profile = util.sinput('channel profile of {}'.format(channel_name), default=channel_default_str)
                                 profile_duplicates = True
                         if not profile_duplicates: break
