@@ -1,0 +1,289 @@
+---
+
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ../organizations/ordererOrganizations/hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+        OrdererEndpoints:
+            - orderer.hn.com:7050
+
+
+    - &Car1
+        Name: Car1MSP
+        ID: Car1MSP
+        MSPDir: ../organizations/peerOrganizations/car1.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Car1MSP.admin', 'Car1MSP.peer', 'Car1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Car1MSP.admin', 'Car1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Car1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Car1MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.car1.hn.com
+              Port: 7051
+
+    - &Car2
+        Name: Car2MSP
+        ID: Car2MSP
+        MSPDir: ../organizations/peerOrganizations/car2.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Car2MSP.admin', 'Car2MSP.peer', 'Car2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Car2MSP.admin', 'Car2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Car2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Car2MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.car2.hn.com
+              Port: 8051
+
+    - &Car3
+        Name: Car3MSP
+        ID: Car3MSP
+        MSPDir: ../organizations/peerOrganizations/car3.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Car3MSP.admin', 'Car3MSP.peer', 'Car3MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Car3MSP.admin', 'Car3MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Car3MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Car3MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.car3.hn.com
+              Port: 9051
+
+    - &Car4
+        Name: Car4MSP
+        ID: Car4MSP
+        MSPDir: ../organizations/peerOrganizations/car4.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Car4MSP.admin', 'Car4MSP.peer', 'Car4MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Car4MSP.admin', 'Car4MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Car4MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Car4MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.car4.hn.com
+              Port: 10051
+
+    - &Car5
+        Name: Car5MSP
+        ID: Car5MSP
+        MSPDir: ../organizations/peerOrganizations/car5.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Car5MSP.admin', 'Car5MSP.peer', 'Car5MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Car5MSP.admin', 'Car5MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Car5MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Car5MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.car5.hn.com
+              Port: 11051
+
+    - &Main
+        Name: MainMSP
+        ID: MainMSP
+        MSPDir: ../organizations/peerOrganizations/main.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('MainMSP.admin', 'MainMSP.peer', 'MainMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('MainMSP.admin', 'MainMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('MainMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('MainMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.main.hn.com
+              Port: 12051
+
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+Orderer: &OrdererDefaults
+    OrdererType: etcdraft
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.hn.com
+          Port: 7050
+          ClientTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+
+    Addresses: 
+        - orderer.hn.com:7050
+
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+Profiles:
+    HnNetworkProfile:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            Consortium:
+                Organizations:
+                    - *Car1
+                    - *Car2
+                    - *Car3
+                    - *Car4
+                    - *Car5
+                    - *Main
+
+    Channel1:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Car1
+                - *Car3
+                - *Car4
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    MainChannel:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Car1
+                - *Car2
+                - *Car3
+                - *Car4
+                - *Car5
+                - *Main
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    Channel2:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Car2
+                - *Car4
+                - *Car5
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
