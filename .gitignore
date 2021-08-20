@@ -22,3 +22,4 @@ build
 log.txt
 
 dist
+package-lock.json

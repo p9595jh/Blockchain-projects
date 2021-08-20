@@ -1,0 +1,246 @@
+---
+
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ../organizations/ordererOrganizations/hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+        OrdererEndpoints:
+            - orderer.hn.com:7050
+
+
+    - &Company1
+        Name: Company1MSP
+        ID: Company1MSP
+        MSPDir: ../organizations/peerOrganizations/company1.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Company1MSP.admin', 'Company1MSP.peer', 'Company1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Company1MSP.admin', 'Company1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Company1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Company1MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.company1.hn.com
+              Port: 7051
+
+    - &Company2
+        Name: Company2MSP
+        ID: Company2MSP
+        MSPDir: ../organizations/peerOrganizations/company2.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Company2MSP.admin', 'Company2MSP.peer', 'Company2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Company2MSP.admin', 'Company2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Company2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Company2MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.company2.hn.com
+              Port: 8051
+
+    - &Employee
+        Name: EmployeeMSP
+        ID: EmployeeMSP
+        MSPDir: ../organizations/peerOrganizations/employee.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('EmployeeMSP.admin', 'EmployeeMSP.peer', 'EmployeeMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('EmployeeMSP.admin', 'EmployeeMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('EmployeeMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('EmployeeMSP.peer')"
+        AnchorPeers:
+            - Host: employee0.employee.hn.com
+              Port: 9051
+
+    - &Career
+        Name: CareerMSP
+        ID: CareerMSP
+        MSPDir: ../organizations/peerOrganizations/career.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('CareerMSP.admin', 'CareerMSP.peer', 'CareerMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('CareerMSP.admin', 'CareerMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('CareerMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('CareerMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.career.hn.com
+              Port: 13051
+
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+Orderer: &OrdererDefaults
+    OrdererType: etcdraft
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.hn.com
+          Port: 7050
+          ClientTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+
+    Addresses: 
+        - orderer.hn.com:7050
+
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+Profiles:
+    HnNetworkProfile:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            Consortium:
+                Organizations:
+                    - *Company1
+                    - *Company2
+                    - *Employee
+                    - *Career
+
+    Channel1:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Company1
+                - *Employee
+                - *Employee
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    CareerChannel:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Company1
+                - *Company2
+                - *Employee
+                - *Employee
+                - *Employee
+                - *Employee
+                - *Career
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    Channel2:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Company2
+                - *Employee
+                - *Employee
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+

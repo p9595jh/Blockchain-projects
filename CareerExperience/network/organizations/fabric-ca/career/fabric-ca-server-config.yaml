@@ -1,0 +1,129 @@
+affiliations:
+  career:
+  - department1
+  company1:
+  - department1
+  company2:
+  - department1
+  - department2
+  employee:
+  - department1
+bccsp:
+  default: SW
+  sw:
+    filekeystore:
+      keystore: msp/keystore
+    hash: SHA2
+    security: 256
+ca:
+  certfile: null
+  chainfile: null
+  keyfile: null
+  name: ca-career
+cacount: null
+cafiles: null
+crl:
+  expiry: 24h
+crlsizelimit: 512000
+csr:
+  ca:
+    expiry: 131400h
+    pathlength: 1
+  cn: ca.career.hn.com
+  hosts:
+  - localhost
+  - career.hn.com
+  names:
+  - C: US
+    L: Durham
+    O: career.hn.com
+    OU: null
+    ST: North Carolina
+db:
+  datasource: fabric-ca-server.db
+  tls:
+    certfiles: null
+    client:
+      certfile: null
+      keyfile: null
+    enabled: false
+  type: sqlite3
+debug: false
+intermediate:
+  enrollment:
+    hosts: null
+    label: null
+    profile: null
+  parentserver:
+    caname: null
+    url: null
+  tls:
+    certfiles: null
+    client:
+      certfile: null
+      keyfile: null
+ldap:
+  attribute:
+    converters:
+    - name: null
+      value: null
+    maps:
+      groups:
+      - name: null
+        value: null
+    names:
+    - uid
+    - member
+  enabled: false
+  tls:
+    certfiles: null
+    client:
+      certfile: null
+      keyfile: null
+  url: ldap://<adminDN>:<adminPassword>@<host>:<port>/<base>
+port: 10054
+registry:
+  identities:
+  - affiliation: ''
+    attrs:
+      hf.AffiliationMgr: true
+      hf.GenCRL: true
+      hf.IntermediateCA: true
+      hf.Registrar.Attributes: '*'
+      hf.Registrar.DelegateRoles: '*'
+      hf.Registrar.Roles: '*'
+      hf.Revoker: true
+    name: admin
+    pass: adminpw
+    type: client
+  maxenrollments: -1
+signing:
+  default:
+    expiry: 8760h
+    usage:
+    - digital signature
+  profiles:
+    ca:
+      caconstraint:
+        isca: true
+        maxpathlen: 0
+      expiry: 43800h
+      usage:
+      - cert sign
+      - crl sign
+    tls:
+      expiry: 8760h
+      usage:
+      - signing
+      - key encipherment
+      - server auth
+      - client auth
+      - key agreement
+tls:
+  certfile: null
+  clientauth:
+    certfiles: null
+    type: noclientcert
+  enabled: true
+  keyfile: null
+version: 1.2.0

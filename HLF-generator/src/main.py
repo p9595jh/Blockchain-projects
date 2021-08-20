@@ -390,7 +390,7 @@ if __name__ == '__main__':
         config.line_print()
         print('[Organization %d/%d]' % (i + 1, number_of_organs))
         # addr, name, msp, admin='admin', adminpw='adminpw', peers=[]
-        addr = util.sinput('addr', default='org{}'.format(i + 1))
+        addr = util.sinput('addr', default='org{}'.format(i + 1), pattern='[a-z]+[a-zA-Z0-9]+')
         name = util.sinput('name', default=addr[0].upper() + addr[1:])
         msp = util.sinput('MSP', default=name + 'MSP')
         caport = util.ninput('CA port', default=config.caport_default + config.caport_default_step * created_ca_count)
@@ -398,7 +398,7 @@ if __name__ == '__main__':
         admin = util.sinput('admin', default='admin')
         adminpw = util.sinput('admin password', default='adminpw')
 
-        number_of_peers = util.ninput('Number of peers of the organization {}'.format(i), default=1)
+        number_of_peers = util.ninput('Number of peers of {}'.format(name), default=1)
         peers = []
         # name, port, channels
         for j in range(number_of_peers):
