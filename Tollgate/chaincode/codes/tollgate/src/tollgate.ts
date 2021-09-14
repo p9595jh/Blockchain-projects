@@ -75,7 +75,7 @@ export class Tollgate extends Contract {
                 car_type: item.type,
                 owner: people[i]
             };
-            car.key = car.car_num;
+            car.key = 'C-' + car.car_num;
             await context.stub.putState(car.key, Buffer.from(JSON.stringify(car)));
 
             const driver: Driver = {
@@ -158,6 +158,36 @@ export class Tollgate extends Contract {
         const driver = await this.getDriver(context, phone);
         driver.charged -= payed;
         await context.stub.putState(driver.key, Buffer.from(JSON.stringify(driver)));
+    }
+
+    async getDrivers(context: Context) {
+        const res = context.stub.getQueryResult(JSON.stringify({
+            selector: {
+                key: {
+                    $regex: '^010'
+                }
+            }
+        }));
+        const drivers: Driver[] = [];
+        for await (const {key, value} of res) {
+            drivers.push(JSON.parse( value.toString() ));
+        }
+        return drivers;
+    }
+
+    async getCars(context: Context) {
+        const res = context.stub.getQueryResult(JSON.stringify({
+            selector: {
+                key: {
+                    $regex: '^C-'
+                }
+            }
+        }));
+        const cars: Driver[] = [];
+        for await (const {key, value} of res) {
+            cars.push(JSON.parse( value.toString() ));
+        }
+        return cars;
     }
 
 }

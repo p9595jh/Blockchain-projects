@@ -1,0 +1,109 @@
+<table border="1">
+  <caption>
+    <button (click)="getAllCars()">get all cars</button>
+  </caption>
+  <tr>
+    <th>key</th>
+    <th>num</th>
+    <th>type</th>
+    <th>name</th>
+    <th>owner</th>
+  </tr>
+  <tr *ngFor="let car of cars">
+    <td>{{ car.key }}</td>
+    <td>{{ car.car_num }}</td>
+    <td>{{ car.car_type }}</td>
+    <td>{{ car.name }}</td>
+    <td>{{ car.owner }}</td>
+  </tr>
+</table>
+
+<br><br><br><br>
+
+<table border="1">
+  <caption>
+    <button (click)="getAllDrivers()">get all drivers</button>
+  </caption>
+  <tr>
+    <th>key</th>
+    <th>phone</th>
+    <th>charged</th>
+  </tr>
+  <tr *ngFor="let driver of drivers">
+    <td>{{ driver.key }}</td>
+    <td>{{ driver.phone }}</td>
+    <td>{{ driver.charged }}</td>
+  </tr>
+</table>
+
+<br><br><br><br>
+
+<table border="1">
+  <caption>
+    <button (click)="getAllRecords()">get all records</button>
+  </caption>
+  <tr>
+    <th>key</th>
+    <th>car_num</th>
+    <th>timestamp</th>
+    <th>tollgate</th>
+    <th>money</th>
+  </tr>
+  <tr *ngFor="let record of records">
+    <td>{{ record.key }}</td>
+    <td>{{ record.car_num }}</td>
+    <td>{{ record.timestamp }}</td>
+    <td>{{ record.tollgatet }}</td>
+    <td>{{ record.money }}</td>
+  </tr>
+</table>
+
+<br><br><br><br>
+
+<form (submit)="charge()">
+  <legend>charge</legend>
+  <table>
+    <tr>
+      <td>car num</td>
+      <td>
+        <input type="text" [(ngModel)]="charge_item.car_num" name="car_num">
+      </td>
+    </tr>
+    <tr>
+      <td>tollgate</td>
+      <td>
+        <input type="text" [(ngModel)]="charge_item.tollgate" name="tollgate">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <button type="submit">submit</button>
+      </td>
+    </tr>
+  </table>
+</form>
+
+<br><br><br><br>
+
+<form (submit)="pay()">
+  <legend>pay</legend>
+  <table>
+    <tr>
+      <td>phone</td>
+      <td>
+        <input type="text" [(ngModel)]="pay_item.phone" name="phone">
+      </td>
+    </tr>
+    <tr>
+      <td>payed</td>
+      <td>
+        <input type="number" [(ngModel)]="pay_item.payed" name="payed">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <button type="submit">submit</button>
+      </td>
+    </tr>
+  </table>
+</form>
