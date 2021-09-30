@@ -1,0 +1,387 @@
+---
+
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ../organizations/ordererOrganizations/hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+        OrdererEndpoints:
+            - orderer.hn.com:7050
+
+
+    - &Ins1
+        Name: Ins1MSP
+        ID: Ins1MSP
+        MSPDir: ../organizations/peerOrganizations/ins1.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Ins1MSP.admin', 'Ins1MSP.peer', 'Ins1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Ins1MSP.admin', 'Ins1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Ins1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Ins1MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.ins1.hn.com
+              Port: 7051
+
+    - &Ins2
+        Name: Ins2MSP
+        ID: Ins2MSP
+        MSPDir: ../organizations/peerOrganizations/ins2.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Ins2MSP.admin', 'Ins2MSP.peer', 'Ins2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Ins2MSP.admin', 'Ins2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Ins2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Ins2MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.ins2.hn.com
+              Port: 8051
+
+    - &Ins3
+        Name: Ins3MSP
+        ID: Ins3MSP
+        MSPDir: ../organizations/peerOrganizations/ins3.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Ins3MSP.admin', 'Ins3MSP.peer', 'Ins3MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Ins3MSP.admin', 'Ins3MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Ins3MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Ins3MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.ins3.hn.com
+              Port: 9051
+
+    - &Ga1
+        Name: Ga1MSP
+        ID: Ga1MSP
+        MSPDir: ../organizations/peerOrganizations/ga1.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Ga1MSP.admin', 'Ga1MSP.peer', 'Ga1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Ga1MSP.admin', 'Ga1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Ga1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Ga1MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.ga1.hn.com
+              Port: 10051
+
+    - &Ga2
+        Name: Ga2MSP
+        ID: Ga2MSP
+        MSPDir: ../organizations/peerOrganizations/ga2.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Ga2MSP.admin', 'Ga2MSP.peer', 'Ga2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Ga2MSP.admin', 'Ga2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Ga2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Ga2MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.ga2.hn.com
+              Port: 11051
+
+    - &Hos1
+        Name: Hos1MSP
+        ID: Hos1MSP
+        MSPDir: ../organizations/peerOrganizations/hos1.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Hos1MSP.admin', 'Hos1MSP.peer', 'Hos1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Hos1MSP.admin', 'Hos1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Hos1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Hos1MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.hos1.hn.com
+              Port: 12051
+
+    - &Hos2
+        Name: Hos2MSP
+        ID: Hos2MSP
+        MSPDir: ../organizations/peerOrganizations/hos2.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Hos2MSP.admin', 'Hos2MSP.peer', 'Hos2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Hos2MSP.admin', 'Hos2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Hos2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Hos2MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.hos2.hn.com
+              Port: 13051
+
+    - &Hos3
+        Name: Hos3MSP
+        ID: Hos3MSP
+        MSPDir: ../organizations/peerOrganizations/hos3.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Hos3MSP.admin', 'Hos3MSP.peer', 'Hos3MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Hos3MSP.admin', 'Hos3MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Hos3MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Hos3MSP.peer')"
+        AnchorPeers:
+            - Host: peer0.hos3.hn.com
+              Port: 14051
+
+    - &Customer
+        Name: CustomerMSP
+        ID: CustomerMSP
+        MSPDir: ../organizations/peerOrganizations/customer.hn.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('CustomerMSP.admin', 'CustomerMSP.peer', 'CustomerMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('CustomerMSP.admin', 'CustomerMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('CustomerMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('CustomerMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.customer.hn.com
+              Port: 15051
+
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+Orderer: &OrdererDefaults
+    OrdererType: etcdraft
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.hn.com
+          Port: 7050
+          ClientTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/hn.com/orderers/orderer.hn.com/tls/server.crt
+
+    Addresses: 
+        - orderer.hn.com:7050
+
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+Profiles:
+    HnNetworkProfile:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            Consortium:
+                Organizations:
+                    - *Ins1
+                    - *Ins2
+                    - *Ins3
+                    - *Ga1
+                    - *Ga2
+                    - *Hos1
+                    - *Hos2
+                    - *Hos3
+                    - *Customer
+
+    ConstructorChannelProfile:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Ins1
+                - *Ins2
+                - *Ins3
+                - *Ga1
+                - *Ga2
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    GaChannelProfile:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Ins1
+                - *Ins2
+                - *Ins3
+                - *Ga1
+                - *Ga2
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    MedicalChannelProfile:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Ins1
+                - *Ins2
+                - *Ins3
+                - *Hos1
+                - *Hos2
+                - *Hos3
+                - *Customer
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    InsuranceChannelProfile:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Ins1
+                - *Ins2
+                - *Ins3
+                - *Ga1
+                - *Ga2
+                - *Customer
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+    CustomerChannelProfile:
+        Consortium: Consortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Customer
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
