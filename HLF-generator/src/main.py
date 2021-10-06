@@ -110,7 +110,7 @@ def run_process(log=True):
     
     with open(config.template_path + 'network/organizations/fabric-ca/fabric-ca-server-config.yaml', 'r') as f:
         fabric_ca_server_config = yaml.load(f, Loader=yaml.FullLoader)
-        fabric_ca_server_config['affiliations'] = {org.addr: ['department1', 'department2'] if i is 1 else ['department1'] for i, org in enumerate(util.organs)}
+        fabric_ca_server_config['affiliations'] = {org.addr: ['department1', 'department2'] if i == 1 else ['department1'] for i, org in enumerate(util.organs)}
 
     couchdb_peer_count = 0
     gen_organs_commands = ''
