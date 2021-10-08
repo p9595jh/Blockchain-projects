@@ -70,7 +70,7 @@ class DockerNetOrderer:
         return {
             self.addr: {
                 'container_name': '%s.%s.com' % (self.item.addr, config.srvn),
-                'image': 'hyperledger/fabric-orderer',
+                'image': 'hyperledger/fabric-orderer' + config.IMAGE_TAG,
                 'environment': [
                     'FABRIC_LOGGING_SPEC=INFO',
                     'ORDERER_GENERAL_LISTENADDRESS=0.0.0.0',
@@ -114,7 +114,7 @@ class DockerNetPeer:
         return {
             self.addr: {
                 'container_name': self.addr,
-                'image': 'hyperledger/fabric-peer',
+                'image': 'hyperledger/fabric-peer' + config.IMAGE_TAG,
                 'environment': [
                     'CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock',
                     'CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=docker_test',

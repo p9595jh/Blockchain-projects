@@ -59,7 +59,7 @@ def copy_replace(src: str, dst: str, replace_dict: dict):
             try:
                 new, count = v
                 content = content.replace('{{%s}}' % k, new, count)
-            except ValueError as e:
+            except ValueError:
                 new = v[0]
                 content = content.replace('{{%s}}' % k, new)
     with open(config.path + dst, 'w+') as f:
@@ -74,4 +74,6 @@ def naming_var(addr: str, peer_num: int, channel_num: int):
 
 orderer: Orderer = None
 organs = []
+
+IMAGE_TAG = ':2.2'
 

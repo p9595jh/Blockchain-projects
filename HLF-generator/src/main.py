@@ -263,7 +263,12 @@ def run_process(log=True):
     util.copy_replace('network/cc/deploy.sh', None, {
         'CHAINCODE_DEPLOY_COMMANDS': (deploy(), 1)
     })
-    
+
+    # ccfs
+    util.copy_replace('network/cc/ccfs.sh', None, {
+        'CHAINCODE_CCFS_ORDERER_PORT': (str(util.orderer.items[0].port),)
+    })
+
     # envVar
     util.copy_replace('network/scripts/envVar.sh', None, {
         'ORDERER_FIRST_NM': (util.orderer.items[0].addr, 1),
@@ -287,7 +292,7 @@ def run_process(log=True):
     copy_filenames = [
         [
             'network/.env',
-            'network/cc/ccfs.sh',
+            # 'network/cc/ccfs.sh',
             'network/organizations/fabric-ca/registerEnroll.sh',
             'network/organizations/ccp-generate.sh',
             'network/organizations/ccp-template.json',

@@ -53,7 +53,8 @@ elif [ ! -d "$CC_SRC_PATH" ]; then
 fi
 
 CC_SRC_LANGUAGE=$(echo "$CC_SRC_LANGUAGE" | tr [:upper:] [:lower:])
-CC_PACKAGE_PATH="../chaincode/packages/${CC_NAME}_${CC_VERSION}.tar.gz"
+# CC_PACKAGE_PATH="../chaincode/packages/${CC_NAME}_${CC_VERSION}.tar.gz"
+CC_PACKAGE_PATH="../chaincode/packages/${CC_NAME}.tar.gz"
 
 # do some language specific preparation to the chaincode before packaging
 if [ "$CC_SRC_LANGUAGE" = "go" ]; then

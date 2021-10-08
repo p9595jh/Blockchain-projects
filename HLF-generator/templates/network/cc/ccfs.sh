@@ -8,7 +8,8 @@
 packageChaincode() {
 	set -x
 	#peer lifecycle chaincode package ${CC_NAME}.tar.gz --path ${CC_SRC_PATH} --lang ${CC_RUNTIME_LANGUAGE} --label ${CC_NAME}_${CC_VERSION} >&log.txt
-	peer lifecycle chaincode package $CC_PACKAGE_PATH --path $CC_SRC_PATH --lang ${CC_RUNTIME_LANGUAGE} --label ${CC_NAME}_${CC_VERSION} >&log.txt
+	# peer lifecycle chaincode package $CC_PACKAGE_PATH --path $CC_SRC_PATH --lang ${CC_RUNTIME_LANGUAGE} --label ${CC_NAME}_${CC_VERSION} >&log.txt
+	peer lifecycle chaincode package $CC_PACKAGE_PATH --path $CC_SRC_PATH --lang ${CC_RUNTIME_LANGUAGE} --label ${CC_NAME} >&log.txt
 	res=$?
 	{ set +x; } 2>/dev/null
 	cat log.txt
@@ -49,7 +50,7 @@ queryInstalled() {
 	res=$?
 	{ set +x; } 2>/dev/null
 	cat log.txt
-	PACKAGE_ID=$(sed -n "/${CC_NAME}_${CC_VERSION}/{s/^Package ID: //; s/, Label:.*$//; p;}" log.txt)
+	PACKAGE_ID=$(sed -n "/${CC_NAME}/{s/^Package ID: //; s/, Label:.*$//; p;}" log.txt)
 	verifyResult $res "Query installed on ${PEER_NM}.${ORG_ADDR} has failed"
 	successln "Query installed successful on ${PEER_NM}.${ORG_ADDR} on channel"
 }
@@ -65,7 +66,7 @@ approveForMyOrg() {
 	setGlobals $ORG_ADDR $ORG_NM $PEER_NM $ADMIN_NM $P0PORT
 
 	set -x
-	peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride ${ORDERER_NM}.${SERV_NM}.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --package-id ${PACKAGE_ID} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
+	peer lifecycle chaincode approveformyorg -o localhost:{{CHAINCODE_CCFS_ORDERER_PORT}} --ordererTLSHostnameOverride ${ORDERER_NM}.${SERV_NM}.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --package-id ${PACKAGE_ID} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
 	res=$?
 	{ set +x; } 2>/dev/null
 	cat log.txt
@@ -82,7 +83,7 @@ commitChaincodeDefinition() {
 	verifyResult $res "Invoke transaction failed on channel '$CHANNEL_NAME' due to uneven number of peer and org parameters "
 
 	set -x
-	peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride ${ORDERER_NM}.${SERV_NM}.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} $PEER_CONN_PARMS --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
+	peer lifecycle chaincode commit -o localhost:{{CHAINCODE_CCFS_ORDERER_PORT}} --ordererTLSHostnameOverride ${ORDERER_NM}.${SERV_NM}.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} $PEER_CONN_PARMS --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
 	res=$?
 	{ set +x; } 2>/dev/null
 	cat log.txt
@@ -135,7 +136,7 @@ chaincodeInvokeInit() {
 	set -x
 	fcn_call='{"function":"'${CC_INIT_FCN}'","Args":[]}'
 	infoln "invoke fcn call:${fcn_call}"
-	peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride ${ORDERER_NM}.${SERV_NM}.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS --isInit -c ${fcn_call} >&log.txt
+	peer chaincode invoke -o localhost:{{CHAINCODE_CCFS_ORDERER_PORT}} --ordererTLSHostnameOverride ${ORDERER_NM}.${SERV_NM}.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS --isInit -c ${fcn_call} >&log.txt
 	res=$?
 	{ set +x; } 2>/dev/null
 	cat log.txt

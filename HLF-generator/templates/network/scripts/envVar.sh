@@ -47,6 +47,7 @@ parsePeerConnectionParameters() {
     local PEER_NM=$3
     local ADMIN_NM=$4
     local P0PORT=$5
+    local CHANNEL_NAME=$6
 
     setGlobals $ORG_ADDR $ORG_NM $PEER_NM $ADMIN_NM $P0PORT
     PEER="${PEER_NM}.${ORG_ADDR}"
@@ -54,7 +55,7 @@ parsePeerConnectionParameters() {
     PEER_CONN_PARMS="$PEER_CONN_PARMS --peerAddresses $CORE_PEER_ADDRESS"
     TLSINFO=$(eval echo "--tlsRootCertFiles $CORE_PEER_TLS_ROOTCERT_FILE")
     PEER_CONN_PARMS="$PEER_CONN_PARMS $TLSINFO"
-    shift 5
+    shift 6
   done
   PEERS="$(echo -e "$PEERS" | sed -e 's/^[[:space:]]*//')"
 }

@@ -28,7 +28,8 @@ def repeat(params, label, command, infoln=None):
     return s
 
 def one_set(params, indent='  '):
-    s = indent + unset(params)
+    # s = indent + unset(params)
+    s = ''
 
     s += indent + '## package the chaincode\npackageChaincode\n\n'
     s += indent + repeat(params, 'Install chaincode', 'installChaincode', 'Installing chaincode on the channel...')

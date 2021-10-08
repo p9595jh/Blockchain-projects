@@ -41,3 +41,5 @@ chaincode_title_folder = 'testcc'
 
 # [(title, folder)]
 chaincode_titles = []
+
+IMAGE_TAG = ':2.2'
