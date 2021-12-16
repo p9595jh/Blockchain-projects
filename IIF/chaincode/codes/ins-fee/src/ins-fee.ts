@@ -1,41 +1,39 @@
 import { Context, Contract } from "fabric-contract-api";
-import { FeeData } from './fee-data';
+import * as models from '../../common/models';
 import * as utils from './utils';
 
 export class InsFee extends Contract {
 
-    async initLedger(context: Context) {
+    async initLedger(ctx: Context) {
         console.log('initializing the chaincode');
 
         for (let i=0; i<8; i++) {
-            const fee: FeeData = {
-                date: utils.dateFormat(new Date(context.stub.getTxTimestamp().nanos)),
-                num: this.key(context),
-                companyCode: ['012', '014'][Math.floor(Math.random() * 2)],
-                product: 'PRODUCT' + i,
-                fee: Math.floor(Math.random() * 100000) + 100000
-            };
-            fee.key = fee.num;
-            await context.stub.putState(fee.key, utils.stateValue(fee));
+            const fee = new models.FeeData();
+            fee.date = utils.dateFormat(new Date(ctx.stub.getTxTimestamp().nanos));
+            fee.num = `${ctx.stub.getTxTimestamp().nanos}`;
+            fee.companyCode = [12, 14][Math.floor(Math.random() * 2)];
+            fee.product = 'INS-' + i;
+            fee.fee = Math.floor(Math.random() * 100000) + 100000;
+            await ctx.stub.putState(fee.genKey(), utils.stateValue(fee));
         }
 
         console.log('initialized');
     }
 
-    async getAll(context: Context) {
+    async getAll(ctx: Context) {
         const startKey = '';
         const endKey = '';
-        const results: FeeData[] = [];
+        const results: models.FeeData[] = [];
 
-        for await (const {key, value} of context.stub.getStateByRange(startKey, endKey)) {
+        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
             const strValue = Buffer.from(value).toString('utf8');
-            let record: FeeData;
+            let record: models.FeeData;
             try {
                 record = JSON.parse(strValue);
                 record.key = key;
             } catch(err) {
                 console.log(err);
-                record = new FeeData();
+                record = new models.FeeData();
                 record.key = key;
             }
             results.push(record);
@@ -43,13 +41,13 @@ export class InsFee extends Contract {
         return results;
     }
 
-    async get(context: Context, key: string) {
-        const byteItem = await context.stub.getState(key);
+    async get(ctx: Context, key: string) {
+        const byteItem = await ctx.stub.getState(key);
         if ( !byteItem || byteItem.length === 0 ) {
             throw new Error(`error on loading data '${key}'`);
         }
         try {
-            const fee = <FeeData> JSON.parse( byteItem.toString() );
+            const fee = <models.FeeData> JSON.parse( byteItem.toString() );
             return fee;
 
         } catch(err) {
@@ -58,17 +56,16 @@ export class InsFee extends Contract {
         }
     }
 
-    async create(context: Context, companyCode: string, product: string, fee: number) {
+    async create(ctx: Context, companyCode: number, product: string, fee: number) {
         try {
-            const f: FeeData = {
-                date: utils.dateFormat(new Date(context.stub.getTxTimestamp().nanos)),
-                num: this.key(context),
-                companyCode: companyCode,
-                product: product,
-                fee: fee
-            };
+            const f = new models.FeeData();
+            f.date = utils.dateFormat(new Date(ctx.stub.getTxTimestamp().nanos));
+            f.num = `${ctx.stub.getTxTimestamp().nanos}`;
+            f.companyCode = companyCode;
+            f.product = product;
+            f.fee = fee;
             f.key = f.num;
-            await context.stub.putState(f.key, utils.stateValue(f));
+            await ctx.stub.putState(f.key, utils.stateValue(f));
             console.log(`new fee data generated`);
 
         } catch(err) {
@@ -77,13 +74,13 @@ export class InsFee extends Contract {
         }
     }
 
-    async edit(context: Context, key: string, field: string, value: string) {
-        const byteItem = await context.stub.getState(key);
+    async edit(ctx: Context, key: string, field: string, value: any) {
+        const byteItem = await ctx.stub.getState(key);
         if ( !byteItem || byteItem.length === 0 ) {
             throw new Error(`error on loading data '${key}'`);
         }
         try {
-            const f = <FeeData> JSON.parse( byteItem.toString() );
+            const f = <models.FeeData> JSON.parse( byteItem.toString() );
             const keys = f.key.split('-');
             let sequence = 1
             if ( keys[keys.length - 1].includes('E') ) {
@@ -95,18 +92,13 @@ export class InsFee extends Contract {
             f.key = newKey;
             f.num = newKey;
             f[field] = value;
-            await context.stub.putState(f.key, utils.stateValue(f));
+            await ctx.stub.putState(f.key, utils.stateValue(f));
             console.log(`fee data edited`);
 
         } catch(err) {
             console.log(err);
             return undefined;
         }
-    }
-
-    private key(context: Context) {
-        const r = Math.floor(Math.random() * 1000);
-        return `G-${context.stub.getTxTimestamp().nanos}-${r}`;
     }
 
 }

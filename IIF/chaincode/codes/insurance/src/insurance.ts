@@ -1,24 +1,21 @@
 import { Context, Contract } from "fabric-contract-api";
 import * as utils from './utils';
+import * as models from '../../common/models';
 
 export class Insurance extends Contract {
 
-    async initLedger(ctx: Context) {}
+    async initLedger(ctx: Context) {
+        const companies = [ 'INS1', 'INS2', 'INS3' ];
+        for (let i=0; i<10; i++) {
+            const insurance = new models.Insurance();
+            insurance.name = 'INSURANCE' + i;
+            insurance.company = i % 3;
+            insurance.id = `${i}`;
+            await ctx.stub.putState(insurance.genKey(), utils.stateValue(insurance));
+        }
+    }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //   Functions below are to just refer.
-    //   Please remove when start developing.
-    //
-    //   Reference functions: getAll, get, create, update, delete
-    //   getAll:    get all data from database
-    //   get:       get a specific data with a given key
-    //   create:    create new data and insert to the database
-    //   update:    update a given data
-    //   delete:    delete a data in the database with a given key
-    //
-    ////////////////////////////////////////////////////////////////////////////////////////
-    async getAll(ctx: Context) {
+    async getAllInsurances(ctx: Context) {
         const startKey = '';
         const endKey = '';
         const results = [];
@@ -38,7 +35,7 @@ export class Insurance extends Contract {
         return results;
     }
 
-    async get(ctx: Context, key: any) {
+    async getInsurance(ctx: Context, key: any) {
         const byteItem = await ctx.stub.getState(key);
         if ( !byteItem || byteItem.length === 0 ) {
             throw new Error(`error on loading '${key}'`);
@@ -47,20 +44,21 @@ export class Insurance extends Contract {
         return result;
     }
 
-    async create(ctx: Context, value: any) {
-        const timestamp = ctx.stub.getTxTimestamp().seconds.low;
-        const data = {
-            key: `T-${timestamp}`,
-            value: value
-        };
-        await ctx.stub.putState(data.key, utils.stateValue(data));
+    async createInsurance(ctx: Context, name: string, company: number, id: string) {
+        const insurance = new models.Insurance();
+        insurance.name = name;
+        insurance.company = company;
+        insurance.id = id;
+        await ctx.stub.putState(insurance.genKey(), utils.stateValue(insurance));
     }
 
-    async update(ctx: Context, data: any) {
-        await ctx.stub.putState(data.key, utils.stateValue(data));
+    async updateInsurance(ctx: Context, key: string, field: string, value: any) {
+        const insurance = await this.getInsurance(ctx, key);
+        insurance[field] = value;
+        await ctx.stub.putState(insurance.key, utils.stateValue(insurance));
     }
 
-    async delete(ctx: Context, key: any) {
+    async deleteInsurance(ctx: Context, key: string) {
         await ctx.stub.deleteState(key);
     }
 

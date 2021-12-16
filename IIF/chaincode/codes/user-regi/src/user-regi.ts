@@ -1,24 +1,21 @@
 import { Context, Contract } from "fabric-contract-api";
 import * as utils from './utils';
+import * as models from '../../common/models';
+
 
 export class UserRegi extends Contract {
 
-    async initLedger(ctx: Context) {}
+    async initLedger(ctx: Context) {
+        Math.floor( Math.random() * 100000 ).toString().padStart(5, '0');
+        for (let i=0; i<10; i++) {
+            const customer = new models.Customer();
+            customer.id = 'C-' + i;
+            customer.insurances = [];
+            await ctx.stub.putState(customer.genKey(), utils.stateValue(customer));
+        }
+    }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //   Functions below are to just refer.
-    //   Please remove when start developing.
-    //
-    //   Reference functions: getAll, get, create, update, delete
-    //   getAll:    get all data from database
-    //   get:       get a specific data with a given key
-    //   create:    create new data and insert to the database
-    //   update:    update a given data
-    //   delete:    delete a data in the database with a given key
-    //
-    ////////////////////////////////////////////////////////////////////////////////////////
-    async getAll(ctx: Context) {
+    async getAllCustomers(ctx: Context) {
         const startKey = '';
         const endKey = '';
         const results = [];
@@ -38,29 +35,29 @@ export class UserRegi extends Contract {
         return results;
     }
 
-    async get(ctx: Context, key: any) {
+    async getCustomer(ctx: Context, key: string) {
         const byteItem = await ctx.stub.getState(key);
         if ( !byteItem || byteItem.length === 0 ) {
             throw new Error(`error on loading '${key}'`);
         }
-        const result = utils.toItem(byteItem);
+        const result: models.Customer = utils.toItem(byteItem);
         return result;
     }
 
-    async create(ctx: Context, value: any) {
-        const timestamp = ctx.stub.getTxTimestamp().seconds.low;
-        const data = {
-            key: `T-${timestamp}`,
-            value: value
-        };
-        await ctx.stub.putState(data.key, utils.stateValue(data));
+    async createCustomer(ctx: Context, id: string) {
+        const customer = new models.Customer();
+        customer.id = id;
+        customer.insurances = [];
+        await ctx.stub.putState(customer.genKey(), utils.stateValue(customer));
     }
 
-    async update(ctx: Context, data: any) {
-        await ctx.stub.putState(data.key, utils.stateValue(data));
+    async updateCustomer(ctx: Context, id: string, field: string, value: any) {
+        const customer = await this.getCustomer(ctx, id);
+        customer[field] = value;
+        await ctx.stub.putState(customer.key, utils.stateValue(customer));
     }
 
-    async delete(ctx: Context, key: any) {
+    async deleteCustomer(ctx: Context, key: string) {
         await ctx.stub.deleteState(key);
     }
 

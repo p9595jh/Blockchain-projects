@@ -48,14 +48,9 @@ export class Ga extends Company {
 
 export class FeeData extends Abstract {
     date: string;
-    // G-{timestamp}-{random value (0~999)}
-    // if edited, {existing key}-{sequence}
     num: string;
-    // company code table is needed
-    companyCode: string;
-    // name of the product
+    companyCode: number;
     product: string;
-    // its fee
     fee: number;
 
     representedAs() {

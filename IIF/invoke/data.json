@@ -1,0 +1,391 @@
+{
+    "srvn": "hn",
+    "network_profile": "HnNetworkProfile",
+    "channel_identities": {
+        "constructor-channel": [
+            "ConstructorChannelProfile",
+            "Consortium",
+            [
+                "_ins1_p0_ch0",
+                "_ins2_p0_ch0",
+                "_ins3_p0_ch0",
+                "_ga1_p0_ch0",
+                "_ga2_p0_ch0"
+            ]
+        ],
+        "ga-channel": [
+            "GaChannelProfile",
+            "Consortium",
+            [
+                "_ins1_p0_ch1",
+                "_ins2_p0_ch1",
+                "_ins3_p0_ch1",
+                "_ga1_p0_ch1",
+                "_ga2_p0_ch1"
+            ]
+        ],
+        "medical-channel": [
+            "MedicalChannelProfile",
+            "Consortium",
+            [
+                "_ins1_p0_ch2",
+                "_ins2_p0_ch2",
+                "_ins3_p0_ch2",
+                "_hos1_p0_ch0",
+                "_hos2_p0_ch0",
+                "_hos3_p0_ch0",
+                "_customer_p0_ch1"
+            ]
+        ],
+        "insurance-channel": [
+            "InsuranceChannelProfile",
+            "Consortium",
+            [
+                "_ins1_p0_ch3",
+                "_ins2_p0_ch3",
+                "_ins3_p0_ch3",
+                "_ga1_p0_ch2",
+                "_ga2_p0_ch2",
+                "_customer_p0_ch2"
+            ]
+        ],
+        "customer-channel": [
+            "CustomerChannelProfile",
+            "Consortium",
+            [
+                "_customer_p0_ch0"
+            ]
+        ]
+    },
+    "chaincode_names": [
+        {
+            "title": "IIF",
+            "folder": "iif"
+        },
+        {
+            "title": "UserRegi",
+            "folder": "user-regi"
+        },
+        {
+            "title": "ConstructorRegi",
+            "folder": "constructor-regi"
+        },
+        {
+            "title": "InsFee",
+            "folder": "ins-fee"
+        },
+        {
+            "title": "Medical",
+            "folder": "medical"
+        },
+        {
+            "title": "Insurance",
+            "folder": "insurance"
+        }
+    ],
+    "orderer": {
+        "msp": "OrdererMSP",
+        "caport": 16054,
+        "items": [
+            {
+                "addr": "orderer",
+                "name": "Orderer",
+                "port": 7050
+            }
+        ]
+    },
+    "organs": [
+        {
+            "addr": "ins1",
+            "name": "Ins1",
+            "msp": "Ins1MSP",
+            "caport": 7054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 7051,
+                    "dbport": 5984,
+                    "channels": [
+                        {
+                            "channel": "constructor-channel",
+                            "profile": "ConstructorChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "ga-channel",
+                            "profile": "GaChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "insurance-channel",
+                            "profile": "InsuranceChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "ins2",
+            "name": "Ins2",
+            "msp": "Ins2MSP",
+            "caport": 8054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 8051,
+                    "dbport": 6984,
+                    "channels": [
+                        {
+                            "channel": "constructor-channel",
+                            "profile": "ConstructorChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "ga-channel",
+                            "profile": "GaChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "insurance-channel",
+                            "profile": "InsuranceChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "ins3",
+            "name": "Ins3",
+            "msp": "Ins3MSP",
+            "caport": 9054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 9051,
+                    "dbport": 7984,
+                    "channels": [
+                        {
+                            "channel": "constructor-channel",
+                            "profile": "ConstructorChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "ga-channel",
+                            "profile": "GaChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "insurance-channel",
+                            "profile": "InsuranceChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "ga1",
+            "name": "Ga1",
+            "msp": "Ga1MSP",
+            "caport": 10054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 10051,
+                    "dbport": 8984,
+                    "channels": [
+                        {
+                            "channel": "constructor-channel",
+                            "profile": "ConstructorChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "ga-channel",
+                            "profile": "GaChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "insurance-channel",
+                            "profile": "InsuranceChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "ga2",
+            "name": "Ga2",
+            "msp": "Ga2MSP",
+            "caport": 11054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 11051,
+                    "dbport": 9984,
+                    "channels": [
+                        {
+                            "channel": "constructor-channel",
+                            "profile": "ConstructorChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "ga-channel",
+                            "profile": "GaChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "insurance-channel",
+                            "profile": "InsuranceChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "hos1",
+            "name": "Hos1",
+            "msp": "Hos1MSP",
+            "caport": 12054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 12051,
+                    "dbport": 10984,
+                    "channels": [
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "hos2",
+            "name": "Hos2",
+            "msp": "Hos2MSP",
+            "caport": 13054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 13051,
+                    "dbport": 11984,
+                    "channels": [
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "hos3",
+            "name": "Hos3",
+            "msp": "Hos3MSP",
+            "caport": 14054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 14051,
+                    "dbport": 12984,
+                    "channels": [
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "addr": "customer",
+            "name": "Customer",
+            "msp": "CustomerMSP",
+            "caport": 15054,
+            "admin": "admin",
+            "adminpw": "adminpw",
+            "peers": [
+                {
+                    "name": "peer0",
+                    "port": 15051,
+                    "dbport": 13984,
+                    "channels": [
+                        {
+                            "channel": "customer-channel",
+                            "profile": "CustomerChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "medical-channel",
+                            "profile": "MedicalChannelProfile",
+                            "consortium": "Consortium"
+                        },
+                        {
+                            "channel": "insurance-channel",
+                            "profile": "InsuranceChannelProfile",
+                            "consortium": "Consortium"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "delegate": {
+        "addr": "ins1",
+        "name": "Ins1",
+        "msp": "Ins1MSP",
+        "caport": 7054,
+        "admin": "admin",
+        "adminpw": "adminpw",
+        "peer": {
+            "name": "peer0",
+            "port": 7051,
+            "dbport": 5984,
+            "channel": {
+                "channel": "constructor-channel",
+                "profile": "ConstructorChannelProfile",
+                "consortium": "Consortium"
+            }
+        },
+        "chaincode": "TestCC"
+    }
+}
